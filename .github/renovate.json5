@@ -46,6 +46,21 @@
       "versioningTemplate": "pep440"
     },
 
+    // ── Homebrew/brew release tarball ──
+    // Matches: url: github_files:Homebrew/brew/archive/refs/tags/<version>.tar.gz
+    //          ref: <sha256>
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/elements/bluefin/brew-tarball/brew-tarball\\.bst$/"
+      ],
+      "matchStrings": [
+        "url:\\s*github_files:(?<depName>Homebrew/brew)/archive/refs/tags/(?<currentValue>\\d+\\.\\d+\\.\\d+)\\.tar\\.gz\\n\\s+ref:\\s*(?<currentDigest>[a-f0-9]{64})"
+      ],
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^(?<version>.+)$"
+    },
+
     // ── Nerd Fonts GitHub release tarball ──
     // Matches: url: github_files:ryanoasis/nerd-fonts/releases/download/v<version>/JetBrainsMono.tar.xz
     //          ref: <sha256>
