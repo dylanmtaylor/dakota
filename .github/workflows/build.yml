@@ -54,13 +54,6 @@ jobs:
       - name: Setup Just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4
 
-      - name: Cache BuildStream artifacts
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: ~/.cache/buildstream
-          key: buildstream-${{ hashFiles('elements/freedesktop-sdk.bst', 'elements/gnome-build-meta.bst', 'elements/bluefin/deps.bst') }}
-          restore-keys: buildstream-
-
       - name: Capture build timestamp
         id: timestamp
         run: echo "created=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
