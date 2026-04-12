@@ -13,6 +13,9 @@ depends:
   - bluefin/1password-cli.bst
   - bluefin/1password.bst
 
+  - bluefin/bitwarden-cli.bst
+  - bluefin/bitwarden.bst
+
   - bluefin/firefox.bst
 
   - bluefin/ghostty.bst
