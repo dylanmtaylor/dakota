@@ -1,0 +1,40 @@
+name: Build Dakota ISO
+on:
+  workflow_run:
+    workflows: ["Build Bluefin dakota"]
+    branches: [main]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to build ISO from (default: latest)"
+        default: "latest"
+
+env:
+  IMAGE_REGISTRY: ghcr.io/projectbluefin/dakota
+
+jobs:
+  iso:
+    runs-on: ubuntu-24.04
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    container:
+      image: quay.io/centos-bootc/bootc-image-builder:latest
+      options: --privileged
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: Resolve image ref
+        id: image
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "ref=${{ env.IMAGE_REGISTRY }}:${{ inputs.image_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=${{ env.IMAGE_REGISTRY }}:${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build ISO from container image
+        run: bootc-image-builder --type anaconda-iso --rootfs btrfs ${{ steps.image.outputs.ref }}
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: dakota-live-iso
+          path: output/**/*.iso
